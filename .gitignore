@@ -1,0 +1,12 @@
+# Environment variables
+.env
+.env.test
+
+# Node dependencies
+node_modules/
+
+# Test coverage output
+coverage/
+
+# Optional: logs or temp files
+*.log
