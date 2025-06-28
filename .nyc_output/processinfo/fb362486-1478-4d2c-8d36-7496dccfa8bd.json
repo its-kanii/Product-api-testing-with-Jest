@@ -1,0 +1,1 @@
+{"parent":null,"pid":5628,"argv":["/usr/local/bin/node","/app/app.js"],"execArgv":[],"cwd":"/app","time":1751044492381,"ppid":5617,"coverageFilename":"/app/.nyc_output/fb362486-1478-4d2c-8d36-7496dccfa8bd.json","externalId":"","uuid":"fb362486-1478-4d2c-8d36-7496dccfa8bd","files":["/app/app.js","/app/swagger.js"]}
