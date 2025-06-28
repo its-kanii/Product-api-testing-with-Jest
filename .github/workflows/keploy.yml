@@ -45,6 +45,8 @@ jobs:
         run: |
           keploy test-suite \
             --app=1ea21cd3-97a7-4c33-aa96-1198fcd500d4 \
-            --base-path=http://localhost:8000/api/items \
+            --base-path=http://localhost:3000/api/items \
             --cloud
+
+
 
