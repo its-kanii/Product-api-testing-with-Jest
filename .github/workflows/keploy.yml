@@ -1,0 +1,50 @@
+name: Keploy Cloud Test Suite
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  keploy-cloud-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:5.0
+        ports:
+          - 27017:27017
+        options: --health-cmd="mongosh --eval 'db.runCommand({ ping: 1 })'" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Download Keploy CLI
+        run: |
+          curl -s https://raw.githubusercontent.com/keploy/keploy/main/install.sh | bash
+          sudo mv keploy /usr/local/bin/
+
+      - name: Start the app in background
+        run: |
+          nohup npm start &
+          sleep 10  # wait for server to be ready
+
+      - name: Run Keploy Cloud Test Suite
+        env:
+          KEPLOY_API_KEY: ${{ secrets.KEPLOY_API_KEY }}
+        run: |
+          keploy test-suite \
+            --app=1ea21cd3-97a7-4c33-aa96-1198fcd500d4 \
+            --base-path=http://localhost:8000/api/items \
+            --cloud
+
