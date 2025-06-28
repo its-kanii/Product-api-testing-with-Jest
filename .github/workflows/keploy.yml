@@ -15,7 +15,11 @@ jobs:
         image: mongo:5.0
         ports:
           - 27017:27017
-        options: --health-cmd="mongosh --eval 'db.runCommand({ ping: 1 })'" --health-interval=10s --health-timeout=5s --health-retries=5
+        options: >-
+          --health-cmd="mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout Code
@@ -37,7 +41,7 @@ jobs:
       - name: Start the app in background
         run: |
           nohup npm start &
-          sleep 10  # wait for app to be fully up
+          sleep 10
 
       - name: Run Keploy Test Suite
         env:
@@ -47,5 +51,6 @@ jobs:
             --app=1ea21cd3-97a7-4c33-aa96-1198fcd500d4 \
             --base-path=http://localhost:3000/api/items \
             --cloud
+
 
 
