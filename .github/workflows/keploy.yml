@@ -16,7 +16,7 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd="mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-cmd=mongosh --eval 'db.runCommand({ ping: 1 })'
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -30,27 +30,25 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
 
-      - name: Start the app in background
+      - name: Start the App in Background
         run: |
           nohup npm start &
-          sleep 10  # Give time for the server to start
+          sleep 10
 
-      - name: Extract and Set Up Keploy CLI
-        run: |
-          tar -xzf keploy_linux_amd64.tar.gz
-          chmod +x keploy
-          ls -l keploy
+      - name: Make Keploy CLI Executable
+        run: chmod +x keploy_linux_amd64/keploy_linux_amd64
 
       - name: Run Keploy Cloud Test Suite
         env:
           KEPLOY_API_KEY: ${{ secrets.KEPLOY_API_KEY }}
         run: |
-          ./keploy test-suite \
+          ./keploy_linux_amd64/keploy_linux_amd64 test-suite \
             --app=03d24177-315c-4ee1-a3ac-64ed0ab38567 \
             --base-path=http://localhost:3000/api/items \
             --cloud
+
 
 
