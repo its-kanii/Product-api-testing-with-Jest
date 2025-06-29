@@ -15,11 +15,7 @@ jobs:
         image: mongo:5.0
         ports:
           - 27017:27017
-        options: >-
-          --health-cmd="mongosh --eval 'db.runCommand({ ping: 1 })'"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+        options: --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
       - name: Checkout Code
@@ -33,28 +29,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Set executable permission for Keploy CLI
+        run: chmod +x keploy_linux_amd64/keploy_linux_amd64
+
       - name: Start the app in background
         env:
-          PORT: 3000
-          HOST: 0.0.0.0
+          MONGO_URI: mongodb://localhost:27017/test
         run: |
-          nohup npm start &  # Make sure app.js reads PORT and HOST from env
+          nohup npm start &
           sleep 10
 
-      - name: Set Up Keploy CLI
-        run: |
-          chmod +x keploy_linux_amd64/keploy_linux_amd64
-          sudo mv keploy_linux_amd64/keploy_linux_amd64 /usr/local/bin/keploy
-
       - name: Run Keploy Test Suite
-        env:
-          KEPLOY_API_KEY: ${{ secrets.KEPLOY_API_KEY }}
         run: |
-          keploy test-suite \
-            --app=03d24177-315c-4ee1-a3ac-64ed0ab38567 \
-            --base-path=http://localhost:3000/api/items \
-            --cloud
-
-
-
-
+          ./keploy_linux_amd64/keploy_linux_amd64 test -c "npm start" --delay 10
