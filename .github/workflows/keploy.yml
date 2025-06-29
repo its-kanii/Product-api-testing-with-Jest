@@ -22,7 +22,7 @@ jobs:
           --health-retries=5
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Set up Node.js
@@ -33,16 +33,17 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Set permission for Keploy CLI
+      - name: Set executable permission for Keploy CLI
         run: chmod +x keploy_linux_amd64/keploy_linux_amd64
 
       - name: Start the app in background
         env:
           MONGO_URI: mongodb://localhost:27017/test
         run: |
-          nohup npm start &
+          nohup npm start &  # Ensure your app uses process.env.MONGO_URI
           sleep 10
 
       - name: Run Keploy Test Suite
         run: |
           ./keploy_linux_amd64/keploy_linux_amd64 test -c "npm start" --delay 10
+
