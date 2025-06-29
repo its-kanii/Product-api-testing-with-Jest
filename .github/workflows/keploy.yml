@@ -17,7 +17,7 @@ jobs:
           - 27017:27017
         options: --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'" --health-interval=10s --health-timeout=5s --health-retries=5
 
-    steps:
+    steps:  #  This line was missing
       - name: Checkout Code
         uses: actions/checkout@v3
 
@@ -42,3 +42,4 @@ jobs:
       - name: Run Keploy Test Suite
         run: |
           ./keploy_linux_amd64/keploy_linux_amd64 test -c "npm start" --delay 10
+
