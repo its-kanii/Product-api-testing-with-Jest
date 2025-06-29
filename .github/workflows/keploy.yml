@@ -15,10 +15,14 @@ jobs:
         image: mongo:5.0
         ports:
           - 27017:27017
-        options: --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'" --health-interval=10s --health-timeout=5s --health-retries=5
+        options: >
+          --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
-    steps:  #  This line was missing
-      - name: Checkout Code
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Node.js
@@ -29,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Set executable permission for Keploy CLI
+      - name: Set permission for Keploy CLI
         run: chmod +x keploy_linux_amd64/keploy_linux_amd64
 
       - name: Start the app in background
@@ -42,4 +46,3 @@ jobs:
       - name: Run Keploy Test Suite
         run: |
           ./keploy_linux_amd64/keploy_linux_amd64 test -c "npm start" --delay 10
-
