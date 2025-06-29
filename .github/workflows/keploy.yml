@@ -15,7 +15,11 @@ jobs:
         image: mongo:5.0
         ports:
           - 27017:27017
-        options: --health-cmd="mongosh --eval 'db.runCommand({ ping: 1 })'" --health-interval=10s --health-timeout=5s --health-retries=5
+        options: >-
+          --health-cmd="mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout Code
@@ -31,15 +35,16 @@ jobs:
 
       - name: Start the app in background
         run: |
-          nohup npm start &  # Adjust if your app runs differently
-          sleep 10
+          nohup npm start &
+          sleep 10  # Give time for the server to start
 
       - name: Extract and Set Up Keploy CLI
         run: |
           tar -xzf keploy_linux_amd64.tar.gz
           chmod +x keploy
+          ls -l keploy
 
-      - name: Run Keploy Test Suite
+      - name: Run Keploy Cloud Test Suite
         env:
           KEPLOY_API_KEY: ${{ secrets.KEPLOY_API_KEY }}
         run: |
@@ -47,4 +52,5 @@ jobs:
             --app=03d24177-315c-4ee1-a3ac-64ed0ab38567 \
             --base-path=http://localhost:3000/api/items \
             --cloud
+
 
