@@ -30,23 +30,28 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
 
-      - name: Set executable permission for Keploy CLI
-        run: chmod +x keploy_linux_amd64/keploy_linux_amd64
-
-      - name: Start the app in background
+      - name: Start the App in Background
         env:
-          MONGO_URI: mongodb://localhost:27017/test
-          PORT: 3000
+          PORT: 8000
           HOST: 0.0.0.0
+          MONGO_URI: mongodb://localhost:27017/test
         run: |
           nohup npm start & 
           sleep 10
 
-      - name: Run Keploy Test Suite
+      - name: Set Executable Permission for Keploy
+        run: chmod +x keploy_linux_amd64/keploy_linux_amd64
+
+      - name: Run Keploy Cloud Test Suite
+        env:
+          KEPLOY_API_KEY: ${{ secrets.KEPLOY_API_KEY }}
         run: |
-          ./keploy_linux_amd64/keploy_linux_amd64 test -c "npm start" --delay 10
+          ./keploy_linux_amd64/keploy_linux_amd64 test-suite \
+            --app=1ea21cd3-97a7-4c33-aa96-1198fcd500d4 \
+            --base-path=http://localhost:8000/api/items \
+            --cloud
 
 
