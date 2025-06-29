@@ -16,7 +16,7 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd="mongo --eval 'db.stats()'"
+          --health-cmd="mongosh --eval 'db.runCommand({ ping: 1 })'"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -34,17 +34,19 @@ jobs:
         run: npm install
 
       - name: Start the app in background
+        env:
+          PORT: 3000
+          HOST: 0.0.0.0
         run: |
-          nohup npm start &
-          sleep 10  # Give time for server to start
+          nohup npm start &  # Make sure app.js reads PORT and HOST from env
+          sleep 10
 
-      - name: Extract and Set Up Keploy CLI
+      - name: Set Up Keploy CLI
         run: |
-          tar -xzf keploy_linux_amd64.tar.gz
-          chmod +x keploy/keploy
-          mv keploy/keploy /usr/local/bin/keploy
+          chmod +x keploy_linux_amd64/keploy_linux_amd64
+          sudo mv keploy_linux_amd64/keploy_linux_amd64 /usr/local/bin/keploy
 
-      - name: Run Keploy Cloud Test Suite
+      - name: Run Keploy Test Suite
         env:
           KEPLOY_API_KEY: ${{ secrets.KEPLOY_API_KEY }}
         run: |
