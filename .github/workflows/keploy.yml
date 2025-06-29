@@ -15,10 +15,10 @@ jobs:
         image: mongo:5.0
         ports:
           - 27017:27017
-        options: >
-          --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'"
-          --health-interval=10s
-          --health-timeout=5s
+        options: >-
+          --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'" 
+          --health-interval=10s 
+          --health-timeout=5s 
           --health-retries=5
 
     steps:
@@ -39,11 +39,14 @@ jobs:
       - name: Start the app in background
         env:
           MONGO_URI: mongodb://localhost:27017/test
+          PORT: 3000
+          HOST: 0.0.0.0
         run: |
-          nohup npm start &  # Ensure your app uses process.env.MONGO_URI
+          nohup npm start & 
           sleep 10
 
       - name: Run Keploy Test Suite
         run: |
           ./keploy_linux_amd64/keploy_linux_amd64 test -c "npm start" --delay 10
+
 
